@@ -30,23 +30,27 @@ print(data_dict["exercises"][0]["nf_calories"])
 print(type(json.dumps(data_dict)))
 
 # add a row to Sheety using a POST request
+# Sheety Docs: https://sheety.co/docs/requests.html
 
 SHEET_ENDPOINT = os.environ["SHEET_ENDPOINT"]
 
 now = dt.datetime.now()
 
+for exercise in data_dict["exercises"]:
 
-workout_data = {
-    "workout": {
-        "date": now.strftime("%d/%m/%Y"),
-        "time": now.strftime("%H:%M"),
-        "exercise": "Running",
-        "duration": 10,
-        "calories": 114,
+    # HINT - outer key needs to match the name of the sheet in the spreadsheet. workouts => workout
+    # HINT - Sheety camelCases the keys of sheet column headings
+    workout_data = {
+        "workout": {
+            "date": now.strftime("%d/%m/%Y"),
+            "time": now.strftime("%H:%M"),
+            "exercise": exercise["name"],
+            "duration": exercise["duration_min"],
+            "calories": exercise["nf_calories"],
+        }
     }
-}
 
-response = requests.post(url=SHEET_ENDPOINT, json=workout_data)
-response.raise_for_status()
-print(response.status_code)
-print(response.text)
+    response = requests.post(url=SHEET_ENDPOINT, json=workout_data)
+    response.raise_for_status()
+    print(response.status_code)
+    print(response.text)
