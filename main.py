@@ -33,6 +33,12 @@ print(type(json.dumps(data_dict)))
 # Sheety Docs: https://sheety.co/docs/requests.html
 
 SHEET_ENDPOINT = os.environ["SHEET_ENDPOINT"]
+TOKEN = os.environ["TOKEN"]
+
+# https://stackoverflow.com/questions/29931671/making-an-api-call-in-python-with-an-api-that-requires-a-bearer-token
+sheety_headers = {
+    "Authorization": "Bearer " + TOKEN,
+}
 
 now = dt.datetime.now()
 
@@ -50,7 +56,8 @@ for exercise in data_dict["exercises"]:
         }
     }
 
-    response = requests.post(url=SHEET_ENDPOINT, json=workout_data)
+    response = requests.post(
+        url=SHEET_ENDPOINT, json=workout_data, headers=sheety_headers)
     response.raise_for_status()
     print(response.status_code)
     print(response.text)
